@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- Version resources -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Audio Fixer</Product>
+    <AssemblyTitle>Audio Fixer</AssemblyTitle>
+    <Description>Automatically detects and fixes CS35L56 amp Code 43 errors on Dell XPS laptops after resume from standby</Description>
+    <Company>Remko Weijnen</Company>
+    <Copyright>Copyright (c) Remko Weijnen 2026</Copyright>
+
+    <!-- Application icon -->
+    <ApplicationIcon>Resources\app.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+  </ItemGroup>
+</Project>
