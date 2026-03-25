@@ -1,10 +1,10 @@
 # Audio Fixer
 
-A system tray utility that automatically detects and fixes a common audio driver issue on Dell XPS laptops equipped with Cirrus Logic CS35L56 amplifiers.
+Automatically detects and fixes a common audio driver issue on Dell XPS laptops equipped with Cirrus Logic CS35L56 amplifiers.
 
 ## The Problem
 
-After resuming from standby/sleep, the CS35L56 amp devices sometimes fail to reinitialize properly, resulting in **Code 43** errors ("Windows has stopped this device because it has reported problems").
+After resuming from standby/sleep, the CS35L56 amp devices sometimes fail to reinitialize properly. The Cirrus Logic driver attempts to download firmware to the amps and fails, resulting in **Code 43** errors ("Windows has stopped this device because it has reported problems").
 
 This affects up to 4 devices:
 - CS35L56 amp (left tweeter)
@@ -26,29 +26,61 @@ The only way to restore audio without rebooting is to **disable and re-enable** 
 
 Audio Fixer automates this process.
 
-## Features
-
-- **System tray icon** with green (OK) or red (error) status indicator
-- **Automatic monitoring** every 30 seconds for Code 43 errors
-- **Resume detection** automatically checks device status after waking from standby
-- **Toast notifications** with a "Fix Now" action button when a problem is detected
-- **One-click fix** via tray icon context menu or toast notification
-- **Verification** confirms all devices are healthy after applying the fix
-
 ## How It Works
 
-1. Enumerates audio devices using the Windows SetupAPI and checks their status via CfgMgr32
-2. Matches devices by friendly name ("CS35L56" for amps, "Smart Sound Technology OED" for the parent device) so it works across different hardware revisions
-3. When a problem is detected, disables and re-enables the Intel SST OED device using `SetupDiCallClassInstaller` with `DIF_PROPERTYCHANGE`
-4. Verifies the fix by re-checking all CS35L56 device statuses
+Audio Fixer uses a **Windows Scheduled Task** triggered by the Cirrus Logic driver's own error event:
 
-No command-line tools (devcon, pnputil, etc.) are used. All device operations go through the Windows SetupAPI and Configuration Manager native APIs.
+- **Event source:** `CirrusLogic-Drv-XuCsMe`
+- **Event ID:** 101 (firmware download failure)
+- **Filter:** Device instance containing `3556` (CS35L56 amps)
+
+When the event fires:
+1. The scheduled task launches AudioFixer.exe after a 10-second delay (to allow self-recovery)
+2. AudioFixer checks if CS35L56 devices still have Code 43
+3. If so, shows a **toast notification** asking the user to confirm the fix
+4. On confirmation, disables and re-enables the Intel SST OED device
+5. Verifies all devices are healthy and shows the result
+
+No polling, no background process, no memory footprint when idle.
+
+## Installation
+
+```
+AudioFixer.exe --install
+```
+
+On first run without the flag, AudioFixer will offer to register the scheduled task automatically.
+
+To remove:
+```
+AudioFixer.exe --uninstall
+```
+
+## Usage
+
+The tool runs automatically via the scheduled task. It can also be run manually:
+
+```
+AudioFixer.exe             # Interactive: toast notification with Fix/Dismiss
+AudioFixer.exe --silent    # Automatic: fix without user interaction
+AudioFixer.exe --install   # Register the scheduled task
+AudioFixer.exe --uninstall # Remove the scheduled task
+```
+
+## Logging
+
+Logs are written to `%LOCALAPPDATA%\AudioFixer\audiofixer.log` with timestamps on every line. Entries older than 14 days are pruned automatically on each run.
+
+## Technical Details
+
+- All device operations use **SetupAPI** and **CfgMgr32** native APIs via P/Invoke (no command-line tools like devcon or pnputil)
+- Devices are matched by friendly name ("CS35L56" for amps, "Smart Sound Technology OED" for the parent), making it portable across hardware revisions
+- Requires administrator privileges (UAC manifest) for device disable/enable
 
 ## Requirements
 
 - Windows 10/11
 - .NET 9.0 Runtime
-- Administrator privileges (required for device disable/enable)
 - Dell XPS laptop with CS35L56 audio amplifiers (developed/tested on Dell XPS 16 9640)
 
 ## Building
@@ -56,14 +88,6 @@ No command-line tools (devcon, pnputil, etc.) are used. All device operations go
 ```
 dotnet build src/AudioFixer/AudioFixer.csproj
 ```
-
-## Usage
-
-Run `AudioFixer.exe` — it will appear in the system tray. The app requires administrator elevation and will prompt via UAC on launch.
-
-- **Double-click** the tray icon to check status (or fix if a problem is detected)
-- **Right-click** for the context menu: Check Now, Fix Now, Exit
-- When a problem is detected, a **toast notification** appears with a "Fix Now" button
 
 ## License
 
