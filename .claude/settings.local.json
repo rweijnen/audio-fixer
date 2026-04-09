@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(adb -s 192.168.3.10:5555 shell pm list packages)",
+      "mcp__everything__find_executable",
+      "Bash(adb -s 192.168.3.10:5555 shell dumpsys package com.kpn.tvlauncher)",
+      "Bash(adb -s 192.168.3.10:5555 shell pm list packages -i)",
+      "Bash(C:/Tools/jadx/bin/jadx.bat -d C:/Work/KPN-iTV/apk/SgcOTAUpgrade_decompiled C:/Work/KPN-iTV/apk/SgcOTAUpgrade.apk)",
+      "Bash(adb:*)",
+      "Bash(curl -s https://raw.githubusercontent.com/wiki/castlabs/electron-releases/EVS.md)",
+      "Bash(gh search:*)",
+      "Bash(curl -s https://raw.githubusercontent.com/wiki/castlabs/electron-releases/CDM.md)",
+      "Bash(gh issue:*)",
+      "WebSearch",
+      "WebFetch(domain:tv.kpn.com)",
+      "mcp__ida-pro-mcp__switch_instance",
+      "mcp__ida-pro-mcp__imports",
+      "mcp__ida-pro-mcp__find_regex",
+      "mcp__ida-pro-mcp__list_funcs",
+      "mcp__ida-pro-mcp__lookup_funcs",
+      "mcp__ida-pro-mcp__decompile",
+      "mcp__ida-pro-mcp__vtable_entries",
+      "mcp__ida-pro-mcp__vtable_scan",
+      "mcp__ida-pro-mcp__get_bytes",
+      "mcp__ida-pro-mcp__disasm",
+      "mcp__ida-pro-mcp__xrefs_to",
+      "mcp__ida-pro-mcp__callees",
+      "mcp__ida-pro-mcp__find_bytes",
+      "Read(//c/Users/me/AppData/Roaming/kpn-itv-desktop-player/**)",
+      "Read(//c/Users/me/AppData/Roaming/kpn-itv-desktop-player/WidevineCdm/**)",
+      "mcp__ida-pro-mcp__list_instances",
+      "Bash(ls C:/Work/KPN-iTV/player/drm-captures/*.b64)"
+    ]
+  }
+}
