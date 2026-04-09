@@ -6,11 +6,15 @@ public sealed class ToastService
 {
     public void ShowProblemDetected(int affectedCount, int totalCount)
     {
+        string description = totalCount == 0
+            ? "CS35L56 amp devices are not visible. The audio subsystem may be disabled or failed to initialize."
+            : $"{affectedCount} of {totalCount} CS35L56 amp device(s) have Code 43 errors.";
+
         new ToastContentBuilder()
             .SetToastScenario(ToastScenario.Reminder)
             .AddText("Audio Device Problem Detected")
-            .AddText($"{affectedCount} of {totalCount} CS35L56 amp device(s) have Code 43 errors.")
-            .AddText("Restart audio services to fix?")
+            .AddText(description)
+            .AddText("Restart the Intel audio controller to fix?")
             .AddButton(new ToastButton()
                 .SetContent("Fix Now")
                 .AddArgument("action", "fix"))

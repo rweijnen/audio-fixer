@@ -18,6 +18,7 @@ internal static class Program
     {
         _log = new LogService();
         ScheduledTaskService.SetLogger(_log);
+        DeviceService.SetLogger(_log);
         _log.LogInvocation(args);
 
         _silent = args.Any(a => a.Equals("--silent", StringComparison.OrdinalIgnoreCase) ||
@@ -155,8 +156,14 @@ internal static class Program
                 _log.LogUserResponse("Fix/restart confirmed via toast");
                 _syncContext?.Post(_ =>
                 {
-                    FixAndReport();
-                    Application.Exit();
+                    try
+                    {
+                        FixAndReport();
+                    }
+                    finally
+                    {
+                        Application.Exit();
+                    }
                 }, null);
                 break;
 
@@ -175,7 +182,10 @@ internal static class Program
                         _log.LogError($"Task registration failed: {ex.Message}");
                         ToastService.ShowTaskRegistrationFailed(ex.Message);
                     }
-                    Application.Exit();
+                    finally
+                    {
+                        Application.Exit();
+                    }
                 }, null);
                 break;
 
@@ -190,7 +200,7 @@ internal static class Program
     {
         try
         {
-            DeviceService.FixAudioDevicesAsync().GetAwaiter().GetResult();
+            DeviceService.FixAudioDevices();
             _log.LogFixResult(true);
 
             if (!_silent)

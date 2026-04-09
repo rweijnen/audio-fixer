@@ -86,7 +86,7 @@ internal static partial class SetupApi
         uint PropertyBufferSize,
         out uint RequiredSize);
 
-    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiSetClassInstallParamsW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool SetupDiSetClassInstallParams(
         IntPtr DeviceInfoSet,
